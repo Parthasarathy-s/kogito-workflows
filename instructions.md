@@ -8,4 +8,5 @@ Provide pom.xml, project structure, and application.properties
 generate pom file with jdk 21, kogito bpmn with quarkus
 🔹 
 
-
+mvn -N io.takari:maven:wrapper
+🔹 
