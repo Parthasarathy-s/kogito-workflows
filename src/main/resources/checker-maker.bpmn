@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:tns="http://www.jboss.org/drools" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd" id="Definitions_1" targetNamespace="http://www.jboss.org/drools">
+  <bpmn2:itemDefinition id="_statusItem" structureRef="String"/>
+  <bpmn2:process id="checker_maker" name="Checker Maker" isExecutable="true" processType="Public" tns:packageName="org.acme">
+    <bpmn2:property id="status" itemSubjectRef="_statusItem" name="status"/>
+    <bpmn2:startEvent id="_start" name="Start">
+      <bpmn2:outgoing>_1</bpmn2:outgoing>
+    </bpmn2:startEvent>
+    <bpmn2:scriptTask id="_init" name="Init Status" scriptFormat="http://www.java.com/java">
+      <bpmn2:incoming>_1</bpmn2:incoming>
+      <bpmn2:outgoing>_init_to_maker</bpmn2:outgoing>
+      <bpmn2:script>System.out.println("Initializing Status to PENDING");
+kcontext.setVariable("status", "PENDING");</bpmn2:script>
+    </bpmn2:scriptTask>
+    <bpmn2:userTask id="_checker" name="Checker">
+      <bpmn2:incoming>_maker_to_checker</bpmn2:incoming>
+      <bpmn2:outgoing>_checker_to_end</bpmn2:outgoing>
+      <bpmn2:ioSpecification id="_checker_inputs">
+        <bpmn2:dataInput id="_checker_TaskName" name="TaskName"/>
+        <bpmn2:inputSet id="_checker_inputSet">
+          <bpmn2:dataInputRefs>_checker_TaskName</bpmn2:dataInputRefs>
+        </bpmn2:inputSet>
+        <bpmn2:outputSet id="_checker_outputSet"/>
+      </bpmn2:ioSpecification>
+      <bpmn2:dataInputAssociation id="_checker_TaskNameAssociation">
+        <bpmn2:targetRef>_checker_TaskName</bpmn2:targetRef>
+        <bpmn2:assignment id="_checker_assignment">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression">Checker</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression">_checker_TaskName</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:potentialOwner id="_checker_owner">
+        <bpmn2:resourceAssignmentExpression id="_checker_assignment_expr">
+          <bpmn2:formalExpression id="_checker_formal_expr">checker</bpmn2:formalExpression>
+        </bpmn2:resourceAssignmentExpression>
+      </bpmn2:potentialOwner>
+    </bpmn2:userTask>
+    <bpmn2:userTask id="_maker" name="Maker">
+      <bpmn2:incoming>_init_to_maker</bpmn2:incoming>
+      <bpmn2:outgoing>_maker_to_checker</bpmn2:outgoing>
+      <bpmn2:ioSpecification id="_maker_inputs">
+        <bpmn2:dataInput id="_maker_TaskName" name="TaskName"/>
+        <bpmn2:inputSet id="_maker_inputSet">
+          <bpmn2:dataInputRefs>_maker_TaskName</bpmn2:dataInputRefs>
+        </bpmn2:inputSet>
+        <bpmn2:outputSet id="_maker_outputSet"/>
+      </bpmn2:ioSpecification>
+      <bpmn2:dataInputAssociation id="_maker_TaskNameAssociation">
+        <bpmn2:targetRef>_maker_TaskName</bpmn2:targetRef>
+        <bpmn2:assignment id="_maker_assignment">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression">Maker</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression">_maker_TaskName</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:potentialOwner id="_maker_owner">
+        <bpmn2:resourceAssignmentExpression id="_maker_assignment_expr">
+          <bpmn2:formalExpression id="_maker_formal_expr">maker</bpmn2:formalExpression>
+        </bpmn2:resourceAssignmentExpression>
+      </bpmn2:potentialOwner>
+    </bpmn2:userTask>
+    <bpmn2:endEvent id="_end" name="End">
+      <bpmn2:incoming>_checker_to_end</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:sequenceFlow id="_1" sourceRef="_start" targetRef="_init"/>
+    <bpmn2:sequenceFlow id="_init_to_maker" sourceRef="_init" targetRef="_maker"/>
+    <bpmn2:sequenceFlow id="_maker_to_checker" sourceRef="_maker" targetRef="_checker"/>
+    <bpmn2:sequenceFlow id="_checker_to_end" sourceRef="_checker" targetRef="_end"/>
+  </bpmn2:process>
+</bpmn2:definitions>
