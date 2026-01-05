@@ -1,0 +1,21 @@
+# Maven
+target/
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+*.log
+
+# IDEs
+.idea/
+*.iml
+.vscode/
+*.ipr
+*.iws
+
+# Mac
+.DS_Store
+
+# Quarkus
+.quarkus/
