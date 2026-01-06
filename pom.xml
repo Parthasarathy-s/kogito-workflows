@@ -63,6 +63,25 @@
             <artifactId>jbpm-with-drools-quarkus</artifactId>
         </dependency>
 
+        <!-- Persistence -->
+        <dependency>
+            <groupId>org.kie</groupId>
+            <artifactId>kie-addons-quarkus-persistence-jdbc</artifactId>
+            <version>10.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-jdbc-h2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-agroal</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-flyway</artifactId>
+        </dependency>
+
         <dependency>
         <groupId>io.quarkus</groupId>
         <artifactId>quarkus-rest-jackson</artifactId>

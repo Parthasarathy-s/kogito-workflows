@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:bpsim="http://www.bpsim.org/schemas/1.0" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:drools="http://www.jboss.org/drools" id="_PI9ZQMxTED6pX__s4BJy_w" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd http://www.jboss.org/drools drools.xsd http://www.bpsim.org/schemas/1.0 bpsim.xsd http://www.omg.org/spec/DD/20100524/DC DC.xsd http://www.omg.org/spec/DD/20100524/DI DI.xsd " exporter="jBPM Process Modeler" exporterVersion="2.0" targetNamespace="http://www.omg.org/bpmn20">
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:bpsim="http://www.bpsim.org/schemas/1.0" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:drools="http://www.jboss.org/drools" id="_4OyJAM0BED6mHc1cCSAvMg" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd http://www.jboss.org/drools drools.xsd http://www.bpsim.org/schemas/1.0 bpsim.xsd http://www.omg.org/spec/DD/20100524/DC DC.xsd http://www.omg.org/spec/DD/20100524/DI DI.xsd " exporter="jBPM Process Modeler" exporterVersion="2.0" targetNamespace="http://www.omg.org/bpmn20">
   <bpmn2:itemDefinition id="_statusItem" structureRef="String"/>
+  <bpmn2:itemDefinition id="_decisionItem" structureRef="String"/>
   <bpmn2:itemDefinition id="__maker_SkippableInputXItem" structureRef="Object"/>
   <bpmn2:itemDefinition id="__maker_PriorityInputXItem" structureRef="Object"/>
   <bpmn2:itemDefinition id="__maker_CommentInputXItem" structureRef="Object"/>
@@ -13,6 +14,7 @@
   <bpmn2:itemDefinition id="__maker_NotCompletedReassignInputXItem" structureRef="Object"/>
   <bpmn2:itemDefinition id="__maker_NotStartedNotifyInputXItem" structureRef="Object"/>
   <bpmn2:itemDefinition id="__maker_NotCompletedNotifyInputXItem" structureRef="Object"/>
+  <bpmn2:itemDefinition id="__maker_decisionOutputXItem" structureRef="String"/>
   <bpmn2:itemDefinition id="__checker_SkippableInputXItem" structureRef="Object"/>
   <bpmn2:itemDefinition id="__checker_PriorityInputXItem" structureRef="Object"/>
   <bpmn2:itemDefinition id="__checker_CommentInputXItem" structureRef="Object"/>
@@ -25,28 +27,45 @@
   <bpmn2:itemDefinition id="__checker_NotCompletedReassignInputXItem" structureRef="Object"/>
   <bpmn2:itemDefinition id="__checker_NotStartedNotifyInputXItem" structureRef="Object"/>
   <bpmn2:itemDefinition id="__checker_NotCompletedNotifyInputXItem" structureRef="Object"/>
-  <bpmn2:collaboration id="_92725DD5-775F-40B3-ABB0-EECC90B9BA35" name="Default Collaboration">
-    <bpmn2:participant id="_E25537E3-43B8-43E9-9C64-FCC0D9495B83" name="Pool Participant" processRef="checker_maker"/>
+  <bpmn2:itemDefinition id="__checker_decisionOutputXItem" structureRef="String"/>
+  <bpmn2:collaboration id="_AA30C3F9-CFE9-4A71-9ED6-7823E48EF651" name="Default Collaboration">
+    <bpmn2:participant id="_AFC81172-C274-42D4-B695-9282D827CEBB" name="Pool Participant" processRef="checker_maker"/>
   </bpmn2:collaboration>
   <bpmn2:process id="checker_maker" drools:packageName="org.acme" drools:version="1.0" drools:adHoc="false" name="Checker Maker" isExecutable="true" processType="Public">
     <bpmn2:property id="status" itemSubjectRef="_statusItem" name="status"/>
-    <bpmn2:sequenceFlow id="_1" sourceRef="_start" targetRef="_init"/>
-    <bpmn2:sequenceFlow id="_E6453426-9294-48E6-8B0D-7FC4E2B52B75" sourceRef="_checker" targetRef="_69A902C6-EE84-421A-9060-50AB1D83D570">
+    <bpmn2:property id="decision" itemSubjectRef="_decisionItem" name="decision"/>
+    <bpmn2:sequenceFlow id="_EE431F28-8CE1-4D25-B5CE-47D3D1064009" sourceRef="_C98CE492-42A6-4C2F-B6DF-6283ACD686AA" targetRef="_init_gateway">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="http://www.java.com/java"><![CDATA[return "reject".equals(kcontext.getVariable("decision"));]]></bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="_flow_reset" sourceRef="_decision_gateway" targetRef="_init_gateway">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="http://www.java.com/java"><![CDATA[return "reset".equals(kcontext.getVariable("decision"));]]></bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="_flow_reject" sourceRef="_decision_gateway" targetRef="_maker_gateway">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="http://www.java.com/java"><![CDATA[return "reject".equals(kcontext.getVariable("decision"));]]></bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="_flow_approve" sourceRef="_decision_gateway" targetRef="_69A902C6-EE84-421A-9060-50AB1D83D570">
+      <bpmn2:extensionElements>
+        <drools:metaData name="isAutoConnection.target">
+          <drools:metaValue><![CDATA[true]]></drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="http://www.java.com/java"><![CDATA[return "approve".equals(kcontext.getVariable("decision"));]]></bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="_1" sourceRef="_start" targetRef="_init_gateway"/>
+    <bpmn2:sequenceFlow id="_init_to_maker" sourceRef="_init" targetRef="_maker_gateway"/>
+    <bpmn2:sequenceFlow id="_gateway_to_init" sourceRef="_init_gateway" targetRef="_init"/>
+    <bpmn2:sequenceFlow id="_E6453426-9294-48E6-8B0D-7FC4E2B52B75" sourceRef="_checker" targetRef="_decision_gateway">
       <bpmn2:extensionElements>
         <drools:metaData name="isAutoConnection.target">
           <drools:metaValue><![CDATA[true]]></drools:metaValue>
         </drools:metaData>
       </bpmn2:extensionElements>
     </bpmn2:sequenceFlow>
-    <bpmn2:sequenceFlow id="_07E5F5CC-9AB4-4593-B755-A86F5981C848" sourceRef="_338C06CD-0EA9-48D8-98AE-9C5C509362CB" targetRef="_checker"/>
-    <bpmn2:sequenceFlow id="_maker_to_checker" sourceRef="_maker" targetRef="_338C06CD-0EA9-48D8-98AE-9C5C509362CB">
-      <bpmn2:extensionElements>
-        <drools:metaData name="isAutoConnection.target">
-          <drools:metaValue><![CDATA[true]]></drools:metaValue>
-        </drools:metaData>
-      </bpmn2:extensionElements>
+    <bpmn2:sequenceFlow id="_459865C7-D44F-4E39-87A5-E7807CAEE403" sourceRef="_C98CE492-42A6-4C2F-B6DF-6283ACD686AA" targetRef="_checker">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="http://www.java.com/java"><![CDATA[return "approve".equals(kcontext.getVariable("decision"));]]></bpmn2:conditionExpression>
     </bpmn2:sequenceFlow>
-    <bpmn2:sequenceFlow id="_init_to_maker" sourceRef="_init" targetRef="_maker"/>
+    <bpmn2:sequenceFlow id="_69188D90-0218-4EF1-8A62-526720F00779" sourceRef="_maker" targetRef="_C98CE492-42A6-4C2F-B6DF-6283ACD686AA"/>
+    <bpmn2:sequenceFlow id="_gateway_to_maker" sourceRef="_maker_gateway" targetRef="_maker"/>
     <bpmn2:sequenceFlow id="_7B808FD0-C8CE-4538-B225-0341E5E4E219" sourceRef="_69A902C6-EE84-421A-9060-50AB1D83D570" targetRef="_end">
       <bpmn2:extensionElements>
         <drools:metaData name="isAutoConnection.target">
@@ -54,27 +73,53 @@
         </drools:metaData>
       </bpmn2:extensionElements>
     </bpmn2:sequenceFlow>
+    <bpmn2:exclusiveGateway id="_maker_gateway" name="Maker Merging Gateway" gatewayDirection="Converging">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[Maker Merging Gateway]]></drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>_init_to_maker</bpmn2:incoming>
+      <bpmn2:incoming>_flow_reject</bpmn2:incoming>
+      <bpmn2:outgoing>_gateway_to_maker</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:exclusiveGateway id="_C98CE492-42A6-4C2F-B6DF-6283ACD686AA" gatewayDirection="Diverging">
+      <bpmn2:incoming>_69188D90-0218-4EF1-8A62-526720F00779</bpmn2:incoming>
+      <bpmn2:outgoing>_459865C7-D44F-4E39-87A5-E7807CAEE403</bpmn2:outgoing>
+      <bpmn2:outgoing>_EE431F28-8CE1-4D25-B5CE-47D3D1064009</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:exclusiveGateway id="_init_gateway" name="Init Merging Gateway" gatewayDirection="Converging">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[Init Merging Gateway]]></drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>_1</bpmn2:incoming>
+      <bpmn2:incoming>_flow_reset</bpmn2:incoming>
+      <bpmn2:incoming>_EE431F28-8CE1-4D25-B5CE-47D3D1064009</bpmn2:incoming>
+      <bpmn2:outgoing>_gateway_to_init</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:exclusiveGateway id="_decision_gateway" name="Decision Gateway" gatewayDirection="Diverging">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[Decision Gateway]]></drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>_E6453426-9294-48E6-8B0D-7FC4E2B52B75</bpmn2:incoming>
+      <bpmn2:outgoing>_flow_approve</bpmn2:outgoing>
+      <bpmn2:outgoing>_flow_reject</bpmn2:outgoing>
+      <bpmn2:outgoing>_flow_reset</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
     <bpmn2:scriptTask id="_69A902C6-EE84-421A-9060-50AB1D83D570" name="CHECKER_STATUS" scriptFormat="http://www.java.com/java">
       <bpmn2:extensionElements>
         <drools:metaData name="elementname">
           <drools:metaValue><![CDATA[CHECKER_STATUS]]></drools:metaValue>
         </drools:metaData>
       </bpmn2:extensionElements>
-      <bpmn2:incoming>_E6453426-9294-48E6-8B0D-7FC4E2B52B75</bpmn2:incoming>
+      <bpmn2:incoming>_flow_approve</bpmn2:incoming>
       <bpmn2:outgoing>_7B808FD0-C8CE-4538-B225-0341E5E4E219</bpmn2:outgoing>
-      <bpmn2:script>System.out.println("Initializing Status to CHECKER");
-kcontext.setVariable("status", "CHECKER");</bpmn2:script>
-    </bpmn2:scriptTask>
-    <bpmn2:scriptTask id="_338C06CD-0EA9-48D8-98AE-9C5C509362CB" name="MAKER_STATUS" scriptFormat="http://www.java.com/java">
-      <bpmn2:extensionElements>
-        <drools:metaData name="elementname">
-          <drools:metaValue><![CDATA[MAKER_STATUS]]></drools:metaValue>
-        </drools:metaData>
-      </bpmn2:extensionElements>
-      <bpmn2:incoming>_maker_to_checker</bpmn2:incoming>
-      <bpmn2:outgoing>_07E5F5CC-9AB4-4593-B755-A86F5981C848</bpmn2:outgoing>
-      <bpmn2:script>System.out.println("Initializing Status to MAKER");
-kcontext.setVariable("status", "MAKER");</bpmn2:script>
+      <bpmn2:script>System.out.println("Checker Approved: Status = APPROVED");
+kcontext.setVariable("status", "APPROVED");</bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:startEvent id="_start" name="Start">
       <bpmn2:extensionElements>
@@ -90,7 +135,7 @@ kcontext.setVariable("status", "MAKER");</bpmn2:script>
           <drools:metaValue><![CDATA[Init Status]]></drools:metaValue>
         </drools:metaData>
       </bpmn2:extensionElements>
-      <bpmn2:incoming>_1</bpmn2:incoming>
+      <bpmn2:incoming>_gateway_to_init</bpmn2:incoming>
       <bpmn2:outgoing>_init_to_maker</bpmn2:outgoing>
       <bpmn2:script>System.out.println("Initializing Status to PENDING");
 kcontext.setVariable("status", "PENDING");</bpmn2:script>
@@ -100,16 +145,24 @@ kcontext.setVariable("status", "PENDING");</bpmn2:script>
         <drools:metaData name="elementname">
           <drools:metaValue><![CDATA[Checker]]></drools:metaValue>
         </drools:metaData>
+        <drools:onEntry-script scriptFormat="http://www.java.com/java">
+          <drools:script><![CDATA[System.out.println("Entering Checker Task: Status = CHECKER");
+kcontext.setVariable("status", "CHECKER");]]></drools:script>
+        </drools:onEntry-script>
       </bpmn2:extensionElements>
-      <bpmn2:incoming>_07E5F5CC-9AB4-4593-B755-A86F5981C848</bpmn2:incoming>
+      <bpmn2:incoming>_459865C7-D44F-4E39-87A5-E7807CAEE403</bpmn2:incoming>
       <bpmn2:outgoing>_E6453426-9294-48E6-8B0D-7FC4E2B52B75</bpmn2:outgoing>
       <bpmn2:ioSpecification>
         <bpmn2:dataInput id="_checker_TaskNameInputX" drools:dtype="Object" itemSubjectRef="__checker_TaskNameInputXItem" name="TaskName"/>
         <bpmn2:dataInput id="_checker_SkippableInputX" drools:dtype="Object" itemSubjectRef="__checker_SkippableInputXItem" name="Skippable"/>
+        <bpmn2:dataOutput id="_checker_decisionOutputX" drools:dtype="String" itemSubjectRef="__checker_decisionOutputXItem" name="decision"/>
         <bpmn2:inputSet>
           <bpmn2:dataInputRefs>_checker_TaskNameInputX</bpmn2:dataInputRefs>
           <bpmn2:dataInputRefs>_checker_SkippableInputX</bpmn2:dataInputRefs>
         </bpmn2:inputSet>
+        <bpmn2:outputSet>
+          <bpmn2:dataOutputRefs>_checker_decisionOutputX</bpmn2:dataOutputRefs>
+        </bpmn2:outputSet>
       </bpmn2:ioSpecification>
       <bpmn2:dataInputAssociation>
         <bpmn2:targetRef>_checker_TaskNameInputX</bpmn2:targetRef>
@@ -125,8 +178,12 @@ kcontext.setVariable("status", "PENDING");</bpmn2:script>
           <bpmn2:to xsi:type="bpmn2:tFormalExpression"><![CDATA[_checker_SkippableInputX]]></bpmn2:to>
         </bpmn2:assignment>
       </bpmn2:dataInputAssociation>
-      <bpmn2:potentialOwner id="_PI_1gMxTED6pX__s4BJy_w">
-        <bpmn2:resourceAssignmentExpression id="_PI_1gcxTED6pX__s4BJy_w">
+      <bpmn2:dataOutputAssociation>
+        <bpmn2:sourceRef>_checker_decisionOutputX</bpmn2:sourceRef>
+        <bpmn2:targetRef>decision</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+      <bpmn2:potentialOwner id="_4O1MUM0BED6mHc1cCSAvMg">
+        <bpmn2:resourceAssignmentExpression id="_4O1MUc0BED6mHc1cCSAvMg">
           <bpmn2:formalExpression>checker</bpmn2:formalExpression>
         </bpmn2:resourceAssignmentExpression>
       </bpmn2:potentialOwner>
@@ -136,16 +193,27 @@ kcontext.setVariable("status", "PENDING");</bpmn2:script>
         <drools:metaData name="elementname">
           <drools:metaValue><![CDATA[Maker]]></drools:metaValue>
         </drools:metaData>
+        <drools:onEntry-script scriptFormat="http://www.java.com/java">
+          <drools:script><![CDATA[System.out.println("Entering Maker Task: Status = MAKER");
+kcontext.setVariable("status", "MAKER");]]></drools:script>
+        </drools:onEntry-script>
+        <drools:onExit-script scriptFormat="http://www.java.com/java">
+          <drools:script><![CDATA[System.out.println("Exiting Maker Task");]]></drools:script>
+        </drools:onExit-script>
       </bpmn2:extensionElements>
-      <bpmn2:incoming>_init_to_maker</bpmn2:incoming>
-      <bpmn2:outgoing>_maker_to_checker</bpmn2:outgoing>
+      <bpmn2:incoming>_gateway_to_maker</bpmn2:incoming>
+      <bpmn2:outgoing>_69188D90-0218-4EF1-8A62-526720F00779</bpmn2:outgoing>
       <bpmn2:ioSpecification>
         <bpmn2:dataInput id="_maker_TaskNameInputX" drools:dtype="Object" itemSubjectRef="__maker_TaskNameInputXItem" name="TaskName"/>
         <bpmn2:dataInput id="_maker_SkippableInputX" drools:dtype="Object" itemSubjectRef="__maker_SkippableInputXItem" name="Skippable"/>
+        <bpmn2:dataOutput id="_maker_decisionOutputX" drools:dtype="String" itemSubjectRef="__maker_decisionOutputXItem" name="decision"/>
         <bpmn2:inputSet>
           <bpmn2:dataInputRefs>_maker_TaskNameInputX</bpmn2:dataInputRefs>
           <bpmn2:dataInputRefs>_maker_SkippableInputX</bpmn2:dataInputRefs>
         </bpmn2:inputSet>
+        <bpmn2:outputSet>
+          <bpmn2:dataOutputRefs>_maker_decisionOutputX</bpmn2:dataOutputRefs>
+        </bpmn2:outputSet>
       </bpmn2:ioSpecification>
       <bpmn2:dataInputAssociation>
         <bpmn2:targetRef>_maker_TaskNameInputX</bpmn2:targetRef>
@@ -161,8 +229,12 @@ kcontext.setVariable("status", "PENDING");</bpmn2:script>
           <bpmn2:to xsi:type="bpmn2:tFormalExpression"><![CDATA[_maker_SkippableInputX]]></bpmn2:to>
         </bpmn2:assignment>
       </bpmn2:dataInputAssociation>
-      <bpmn2:potentialOwner id="_PI_1gsxTED6pX__s4BJy_w">
-        <bpmn2:resourceAssignmentExpression id="_PI_1g8xTED6pX__s4BJy_w">
+      <bpmn2:dataOutputAssociation>
+        <bpmn2:sourceRef>_maker_decisionOutputX</bpmn2:sourceRef>
+        <bpmn2:targetRef>decision</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+      <bpmn2:potentialOwner id="_4O1MUs0BED6mHc1cCSAvMg">
+        <bpmn2:resourceAssignmentExpression id="_4O1MU80BED6mHc1cCSAvMg">
           <bpmn2:formalExpression>maker</bpmn2:formalExpression>
         </bpmn2:resourceAssignmentExpression>
       </bpmn2:potentialOwner>
@@ -179,51 +251,89 @@ kcontext.setVariable("status", "PENDING");</bpmn2:script>
   <bpmndi:BPMNDiagram>
     <bpmndi:BPMNPlane bpmnElement="checker_maker">
       <bpmndi:BPMNShape id="shape__end" bpmnElement="_end">
-        <dc:Bounds height="56" width="56" x="660" y="100"/>
+        <dc:Bounds height="56" width="56" x="1160" y="134"/>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="shape__maker" bpmnElement="_maker">
-        <dc:Bounds height="50" width="110" x="320" y="93"/>
+        <dc:Bounds height="50" width="110" x="389" y="129"/>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="shape__checker" bpmnElement="_checker">
-        <dc:Bounds height="50" width="110" x="501" y="93"/>
+        <dc:Bounds height="50" width="110" x="617" y="126"/>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="shape__init" bpmnElement="_init">
-        <dc:Bounds height="50" width="110" x="150" y="93"/>
+        <dc:Bounds height="50" width="110" x="147" y="129"/>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="shape__start" bpmnElement="_start">
         <dc:Bounds height="56" width="56" x="50" y="100"/>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="shape__338C06CD-0EA9-48D8-98AE-9C5C509362CB" bpmnElement="_338C06CD-0EA9-48D8-98AE-9C5C509362CB">
-        <dc:Bounds height="102" width="154" x="298" y="262"/>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="shape__69A902C6-EE84-421A-9060-50AB1D83D570" bpmnElement="_69A902C6-EE84-421A-9060-50AB1D83D570">
-        <dc:Bounds height="102" width="154" x="583" y="256"/>
+        <dc:Bounds height="102" width="154" x="845" y="103"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape__decision_gateway" bpmnElement="_decision_gateway">
+        <dc:Bounds height="56" width="56" x="781" y="3"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape__init_gateway" bpmnElement="_init_gateway">
+        <dc:Bounds height="56" width="56" x="83" y="281"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape__C98CE492-42A6-4C2F-B6DF-6283ACD686AA" bpmnElement="_C98CE492-42A6-4C2F-B6DF-6283ACD686AA">
+        <dc:Bounds height="56" width="56" x="507" y="126"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape__maker_gateway" bpmnElement="_maker_gateway">
+        <dc:Bounds height="56" width="56" x="284" y="126"/>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="edge_shape__69A902C6-EE84-421A-9060-50AB1D83D570_to_shape__end" bpmnElement="_7B808FD0-C8CE-4538-B225-0341E5E4E219">
-        <di:waypoint x="660" y="307"/>
-        <di:waypoint x="688" y="156"/>
+        <di:waypoint x="999" y="154"/>
+        <di:waypoint x="1160" y="162"/>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="edge_shape__init_to_shape__maker" bpmnElement="_init_to_maker">
-        <di:waypoint x="260" y="118"/>
-        <di:waypoint x="320" y="118"/>
+      <bpmndi:BPMNEdge id="edge_shape__maker_gateway_to_shape__maker" bpmnElement="_gateway_to_maker">
+        <di:waypoint x="340" y="154"/>
+        <di:waypoint x="389" y="154"/>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="edge_shape__maker_to_shape__338C06CD-0EA9-48D8-98AE-9C5C509362CB" bpmnElement="_maker_to_checker">
-        <di:waypoint x="430" y="118"/>
-        <di:waypoint x="448" y="107"/>
-        <di:waypoint x="375" y="262"/>
+      <bpmndi:BPMNEdge id="edge_shape__maker_to_shape__C98CE492-42A6-4C2F-B6DF-6283ACD686AA" bpmnElement="_69188D90-0218-4EF1-8A62-526720F00779">
+        <di:waypoint x="444" y="154"/>
+        <di:waypoint x="507" y="154"/>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="edge_shape__338C06CD-0EA9-48D8-98AE-9C5C509362CB_to_shape__checker" bpmnElement="_07E5F5CC-9AB4-4593-B755-A86F5981C848">
-        <di:waypoint x="375" y="313"/>
-        <di:waypoint x="526" y="152"/>
-        <di:waypoint x="556" y="143"/>
+      <bpmndi:BPMNEdge id="edge_shape__C98CE492-42A6-4C2F-B6DF-6283ACD686AA_to_shape__checker" bpmnElement="_459865C7-D44F-4E39-87A5-E7807CAEE403">
+        <di:waypoint x="535" y="154"/>
+        <di:waypoint x="617" y="151"/>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="edge_shape__checker_to_shape__69A902C6-EE84-421A-9060-50AB1D83D570" bpmnElement="_E6453426-9294-48E6-8B0D-7FC4E2B52B75">
-        <di:waypoint x="556" y="118"/>
-        <di:waypoint x="660" y="256"/>
+      <bpmndi:BPMNEdge id="edge_shape__checker_to_shape__decision_gateway" bpmnElement="_E6453426-9294-48E6-8B0D-7FC4E2B52B75">
+        <di:waypoint x="672" y="151"/>
+        <di:waypoint x="781" y="31"/>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="edge_shape__start_to_shape__init" bpmnElement="_1">
+      <bpmndi:BPMNEdge id="edge_shape__init_gateway_to_shape__init" bpmnElement="_gateway_to_init">
+        <di:waypoint x="139" y="309"/>
+        <di:waypoint x="179" y="264"/>
+        <di:waypoint x="202" y="164"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_shape__init_to_shape__maker_gateway" bpmnElement="_init_to_maker">
+        <di:waypoint x="197" y="154"/>
+        <di:waypoint x="284" y="154"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_shape__start_to_shape__init_gateway" bpmnElement="_1">
         <di:waypoint x="86" y="118"/>
-        <di:waypoint x="150" y="118"/>
+        <di:waypoint x="83" y="299"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_shape__decision_gateway_to_shape__69A902C6-EE84-421A-9060-50AB1D83D570" bpmnElement="_flow_approve">
+        <di:waypoint x="837" y="31"/>
+        <di:waypoint x="922" y="103"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_shape__decision_gateway_to_shape__maker_gateway" bpmnElement="_flow_reject">
+        <di:waypoint x="809" y="3"/>
+        <di:waypoint x="688" y="50"/>
+        <di:waypoint x="375" y="50"/>
+        <di:waypoint x="375" y="50"/>
+        <di:waypoint x="312" y="126"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_shape__decision_gateway_to_shape__init_gateway" bpmnElement="_flow_reset">
+        <di:waypoint x="809" y="3"/>
+        <di:waypoint x="688" y="20"/>
+        <di:waypoint x="148" y="20"/>
+        <di:waypoint x="111" y="281"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_shape__C98CE492-42A6-4C2F-B6DF-6283ACD686AA_to_shape__init_gateway" bpmnElement="_EE431F28-8CE1-4D25-B5CE-47D3D1064009">
+        <di:waypoint x="535" y="182"/>
+        <di:waypoint x="281" y="289"/>
+        <di:waypoint x="139" y="309"/>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
@@ -299,26 +409,6 @@ kcontext.setVariable("status", "PENDING");</bpmn2:script>
               </bpsim:ProcessingTime>
             </bpsim:TimeParameters>
           </bpsim:ElementParameters>
-          <bpsim:ElementParameters elementRef="_338C06CD-0EA9-48D8-98AE-9C5C509362CB">
-            <bpsim:TimeParameters>
-              <bpsim:ProcessingTime>
-                <bpsim:NormalDistribution mean="0" standardDeviation="0"/>
-              </bpsim:ProcessingTime>
-            </bpsim:TimeParameters>
-            <bpsim:ResourceParameters>
-              <bpsim:Availability>
-                <bpsim:FloatingParameter value="0"/>
-              </bpsim:Availability>
-              <bpsim:Quantity>
-                <bpsim:FloatingParameter value="0"/>
-              </bpsim:Quantity>
-            </bpsim:ResourceParameters>
-            <bpsim:CostParameters>
-              <bpsim:UnitCost>
-                <bpsim:FloatingParameter value="0"/>
-              </bpsim:UnitCost>
-            </bpsim:CostParameters>
-          </bpsim:ElementParameters>
           <bpsim:ElementParameters elementRef="_69A902C6-EE84-421A-9060-50AB1D83D570">
             <bpsim:TimeParameters>
               <bpsim:ProcessingTime>
@@ -342,7 +432,7 @@ kcontext.setVariable("status", "PENDING");</bpmn2:script>
         </bpsim:Scenario>
       </bpsim:BPSimData>
     </bpmn2:extensionElements>
-    <bpmn2:source>_PI9ZQMxTED6pX__s4BJy_w</bpmn2:source>
-    <bpmn2:target>_PI9ZQMxTED6pX__s4BJy_w</bpmn2:target>
+    <bpmn2:source>_4OyJAM0BED6mHc1cCSAvMg</bpmn2:source>
+    <bpmn2:target>_4OyJAM0BED6mHc1cCSAvMg</bpmn2:target>
   </bpmn2:relationship>
 </bpmn2:definitions>
