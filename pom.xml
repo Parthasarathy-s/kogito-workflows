@@ -27,7 +27,6 @@
                 <scope>import</scope>
             </dependency>
 
-            <!-- https://mvnrepository.com/artifact/org.kie.kogito/kogito-quarkus-bom -->
             <dependency>
                 <groupId>org.kie.kogito</groupId>
                 <artifactId>kogito-quarkus-bom</artifactId>
@@ -39,6 +38,7 @@
     </dependencyManagement>
 
     <dependencies>
+        <!-- Quarkus Core -->
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-rest</artifactId>
@@ -49,15 +49,14 @@
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-junit5</artifactId>
-            <scope>test</scope>
+            <artifactId>quarkus-rest-jackson</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.rest-assured</groupId>
-            <artifactId>rest-assured</artifactId>
-            <scope>test</scope>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-rest-client-jackson</artifactId>
         </dependency>
 
+        <!-- Kogito Process Runtime -->
         <dependency>
             <groupId>org.jbpm</groupId>
             <artifactId>jbpm-with-drools-quarkus</artifactId>
@@ -82,15 +81,48 @@
             <artifactId>quarkus-flyway</artifactId>
         </dependency>
 
+        <!-- Hibernate ORM with Panache for audit entity -->
         <dependency>
-        <groupId>io.quarkus</groupId>
-        <artifactId>quarkus-rest-jackson</artifactId>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-hibernate-orm-panache</artifactId>
         </dependency>
+
+        <!-- Process Management and Events for audit -->
+        <dependency>
+            <groupId>org.kie</groupId>
+            <artifactId>kie-addons-quarkus-process-management</artifactId>
+            <version>10.1.0</version>
+        </dependency>
+       
+
+      
+
+        <!-- Process SVG - for process visualization -->
+        <dependency>
+            <groupId>org.kie</groupId>
+            <artifactId>kie-addons-quarkus-process-svg</artifactId>
+            <version>10.1.0</version>
+        </dependency>
+
+        <!-- Testing -->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-junit5</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <scope>test</scope>
+        </dependency>
+
 
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-rest-client-jackson</artifactId>
+            <artifactId>quarkus-smallrye-metrics</artifactId>
         </dependency>
+
+       
     </dependencies>
 
     <build>
