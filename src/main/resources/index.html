@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checker-Maker Workflow UI with Audit Trail</title>
+    <title>Maker-Checker Workflow UI with Audit Trail</title>
     <style>
         * {
             margin: 0;
@@ -311,7 +311,7 @@
 
 <body>
     <div class="container">
-        <h1>🔄 Checker-Maker Workflow Manager with Audit Trail</h1>
+        <h1>🔄 Maker-Checker Workflow Manager with Audit Trail</h1>
 
         <div class="card">
             <h2>User Information</h2>
@@ -366,7 +366,7 @@
 
         async function startProcess() {
             try {
-                const response = await fetch(`${API_BASE}/checker_maker`, {
+                const response = await fetch(`${API_BASE}/maker_checker`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({})
@@ -387,7 +387,7 @@
             container.innerHTML = '<div class="loading">Loading...</div>';
 
             try {
-                const response = await fetch(`${API_BASE}/checker_maker`);
+                const response = await fetch(`${API_BASE}/maker_checker`);
                 if (!response.ok) throw new Error('Failed to fetch instances');
 
                 const instances = await response.json();
@@ -411,7 +411,7 @@
 
         async function fetchTasks(instanceId) {
             try {
-                const response = await fetch(`${API_BASE}/checker-maker/instances/${instanceId}/tasks`);
+                const response = await fetch(`${API_BASE}/maker-checker/instances/${instanceId}/tasks`);
                 if (!response.ok) return [];
                 return await response.json();
             } catch (error) {
@@ -487,7 +487,7 @@
 
             try {
                 const response = await fetch(
-                    `${API_BASE}/checker-maker/instances/${instanceId}/tasks/${taskId}/complete`,
+                    `${API_BASE}/maker-checker/instances/${instanceId}/tasks/${taskId}/complete`,
                     {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },

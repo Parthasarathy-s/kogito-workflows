@@ -29,9 +29,9 @@
   <bpmn2:itemDefinition id="__checker_NotCompletedNotifyInputXItem" structureRef="Object"/>
   <bpmn2:itemDefinition id="__checker_decisionOutputXItem" structureRef="String"/>
   <bpmn2:collaboration id="_AA30C3F9-CFE9-4A71-9ED6-7823E48EF651" name="Default Collaboration">
-    <bpmn2:participant id="_AFC81172-C274-42D4-B695-9282D827CEBB" name="Pool Participant" processRef="checker_maker"/>
+    <bpmn2:participant id="_AFC81172-C274-42D4-B695-9282D827CEBB" name="Pool Participant" processRef="maker_checker"/>
   </bpmn2:collaboration>
-  <bpmn2:process id="checker_maker" drools:packageName="org.acme" drools:version="1.0" drools:adHoc="false" name="Checker Maker" isExecutable="true" processType="Public">
+  <bpmn2:process id="maker_checker" drools:packageName="org.acme" drools:version="1.0" drools:adHoc="false" name="Maker Checker" isExecutable="true" processType="Public">
     <bpmn2:property id="status" itemSubjectRef="_statusItem" name="status"/>
     <bpmn2:property id="decision" itemSubjectRef="_decisionItem" name="decision"/>
     <bpmn2:sequenceFlow id="_EE431F28-8CE1-4D25-B5CE-47D3D1064009" sourceRef="_C98CE492-42A6-4C2F-B6DF-6283ACD686AA" targetRef="_init_gateway">
@@ -249,7 +249,7 @@ kcontext.setVariable("status", "MAKER");]]></drools:script>
     </bpmn2:endEvent>
   </bpmn2:process>
   <bpmndi:BPMNDiagram>
-    <bpmndi:BPMNPlane bpmnElement="checker_maker">
+    <bpmndi:BPMNPlane bpmnElement="maker_checker">
       <bpmndi:BPMNShape id="shape__end" bpmnElement="_end">
         <dc:Bounds height="56" width="56" x="1160" y="134"/>
       </bpmndi:BPMNShape>

@@ -1,20 +1,20 @@
 
-## Testing Workflow: Checker Maker
+## Testing Workflow: Maker Checker
 
 1. **Start a specific Instance**
    ```bash
-   curl -X POST -H 'Content-Type: application/json' -d '{}' http://localhost:8080/checker_maker
+   curl -X POST -H 'Content-Type: application/json' -d '{}' http://localhost:8080/maker_checker
    ```
    *Response:* `{"id":"<ID>","status":"PENDING"}`
 
 2. **Check Status**
    ```bash
-   curl -X GET http://localhost:8080/checker_maker/<ID>
+   curl -X GET http://localhost:8080/maker_checker/<ID>
    ```
 
 3. **Get "Maker" Task** (Act as user 'maker')
    ```bash
-   curl -X GET "http://localhost:8080/checker_maker/<ID>/tasks?user=maker"
+   curl -X GET "http://localhost:8080/maker_checker/<ID>/tasks?user=maker"
    ```
    *Note ID of the task returned.*
 
@@ -23,17 +23,17 @@
 
    **Option A: Approve** (Proceed to Checker)
    ```bash
-   curl -X POST -H 'Content-Type: application/json' -d '{"decision": "approve"}' "http://localhost:8080/checker_maker/<ID>/Maker/<TASK_ID>?user=maker"
+   curl -X POST -H 'Content-Type: application/json' -d '{"decision": "approve"}' "http://localhost:8080/maker_checker/<ID>/Maker/<TASK_ID>?user=maker"
    ```
 
    **Option B: Reject** (Restart from Init)
    ```bash
-   curl -X POST -H 'Content-Type: application/json' -d '{"decision": "reject"}' "http://localhost:8080/checker_maker/<ID>/Maker/<TASK_ID>?user=maker"
+   curl -X POST -H 'Content-Type: application/json' -d '{"decision": "reject"}' "http://localhost:8080/maker_checker/<ID>/Maker/<TASK_ID>?user=maker"
    ```
 
 5. **Get "Checker" Task** (Act as user 'checker')
    ```bash
-   curl -X GET "http://localhost:8080/checker_maker/<ID>/tasks?user=checker"
+   curl -X GET "http://localhost:8080/maker_checker/<ID>/tasks?user=checker"
    ```
 
 6. **Complete "Checker" Task**
@@ -41,17 +41,17 @@
 
    **Option A: Approve** (Ends the workflow)
    ```bash
-   curl -X POST -H 'Content-Type: application/json' -d '{"decision": "approve"}' "http://localhost:8080/checker_maker/<ID>/Checker/<TASK_ID>?user=checker"
+   curl -X POST -H 'Content-Type: application/json' -d '{"decision": "approve"}' "http://localhost:8080/maker_checker/<ID>/Checker/<TASK_ID>?user=checker"
    ```
 
    **Option B: Reject** (Sends back to Maker)
    ```bash
-   curl -X POST -H 'Content-Type: application/json' -d '{"decision": "reject"}' "http://localhost:8080/checker_maker/<ID>/Checker/<TASK_ID>?user=checker"
+   curl -X POST -H 'Content-Type: application/json' -d '{"decision": "reject"}' "http://localhost:8080/maker_checker/<ID>/Checker/<TASK_ID>?user=checker"
    ```
    *The process will continually loop back to the Maker task until approved.*
 
    **Option C: Reset** (Restarts from Init)
    ```bash
-   curl -X POST -H 'Content-Type: application/json' -d '{"decision": "reset"}' "http://localhost:8080/checker_maker/<ID>/Checker/<TASK_ID>?user=checker"
+   curl -X POST -H 'Content-Type: application/json' -d '{"decision": "reset"}' "http://localhost:8080/maker_checker/<ID>/Checker/<TASK_ID>?user=checker"
    ```
    *The process will loop back to the initialization step and then to the Maker task.*

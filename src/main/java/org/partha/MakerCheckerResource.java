@@ -16,14 +16,14 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Path("/checker-maker")
+@Path("/maker-checker")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Transactional
-public class CheckerMakerResource {
+public class MakerCheckerResource {
 
     @Inject
-    Process<? extends org.kie.kogito.Model> checkerMakerProcess;
+    Process<? extends org.kie.kogito.Model> makerCheckerProcess;
 
     @Inject
     EntityManager entityManager;
@@ -34,7 +34,7 @@ public class CheckerMakerResource {
         List<Map<String, Object>> result = new ArrayList<>();
 
         // Get all process instances
-        checkerMakerProcess.instances().stream().forEach(instance -> {
+        makerCheckerProcess.instances().stream().forEach(instance -> {
             Map<String, Object> info = new HashMap<>();
             info.put("id", instance.id());
             info.put("status", instance.status());
@@ -43,7 +43,7 @@ public class CheckerMakerResource {
         });
 
         // Audit: List all instances
-        logAudit(null, "getAllInstances", "QUERY", "Listed all checker-maker process instances. Total: " + result.size());
+        logAudit(null, "getAllInstances", "QUERY", "Listed all maker-checker process instances. Total: " + result.size());
 
         return Response.ok(result).build();
     }
@@ -51,7 +51,7 @@ public class CheckerMakerResource {
     @GET
     @Path("/instances/{id}")
     public Response getInstance(@PathParam("id") String id) {
-        Optional<?> instance = checkerMakerProcess.instances().findById(id);
+        Optional<?> instance = makerCheckerProcess.instances().findById(id);
 
         if (instance.isEmpty()) {
             // Audit: Instance not found
@@ -74,7 +74,7 @@ public class CheckerMakerResource {
     @GET
     @Path("/instances/{id}/tasks")
     public Response getTasks(@PathParam("id") String id) {
-        Optional<?> instance = checkerMakerProcess.instances().findById(id);
+        Optional<?> instance = makerCheckerProcess.instances().findById(id);
 
         if (instance.isEmpty()) {
             // Audit: Instance not found
@@ -112,7 +112,7 @@ public class CheckerMakerResource {
         logAudit(id, "completeTask", "POST_REQUEST_RECEIVED", 
                 "POST request to complete task: " + taskId + " | Request body: " + (data != null ? data.toString() : "empty"));
 
-        Optional<?> instance = checkerMakerProcess.instances().findById(id);
+        Optional<?> instance = makerCheckerProcess.instances().findById(id);
         System.out.println("Completing task. Instance ID: " + id + " | Task ID: " + taskId);
         
         if (instance.isEmpty()) {
@@ -137,7 +137,7 @@ public class CheckerMakerResource {
         return Response.ok()
                 .entity(Map.of(
                         "status", "UP",
-                        "processId", checkerMakerProcess.id()))
+                        "processId", makerCheckerProcess.id()))
                 .build();
     }
 
@@ -175,14 +175,14 @@ public class CheckerMakerResource {
 @Transactional // CRITICAL: Ensures data is saved to Oracle
 public Response startProcess(Map<String, Object> data) {
     try {
-        System.out.println("Starting new checker-maker process with data: " + (data != null ? data : "empty"));
+            System.out.println("Starting new maker-checker process with data: " + (data != null ? data : "empty"));
         // 1. Log the intent (joins the transaction)
         logAudit(null, "startProcess", "PROCESS_START_REQUEST", 
                 "Attempting to start process with data: " + (data != null ? data : "empty"));
 
         // 2. FIX THE COMPILATION ERROR:
         // Create an empty model instance of the correct type
-        org.kie.kogito.Model model = checkerMakerProcess.createModel();
+        org.kie.kogito.Model model = makerCheckerProcess.createModel();
         
         // Populate the model from the incoming Map
         if (data != null) {
@@ -190,7 +190,7 @@ public Response startProcess(Map<String, Object> data) {
         }
 
         // 3. Create and start the instance using the Model
-        var instance = checkerMakerProcess.createInstance(model);
+        var instance = makerCheckerProcess.createInstance(model);
         instance.start();
         
         String instanceId = instance.id();
@@ -227,10 +227,10 @@ public Response startProcess(Map<String, Object> data) {
         try {
             ProcessAuditLog log = new ProcessAuditLog();
             log.setProcessInstanceId(instanceId != null ? instanceId : "SYSTEM");
-            log.setProcessId("checker-maker");
+            log.setProcessId("maker_checker");
             log.setEventType(eventType);
             log.setAction(action);
-            log.setUserId("checker-maker-resource");
+            log.setUserId("maker-checker-resource");
             log.setComments(details);
             log.setTimestamp(LocalDateTime.now());
             

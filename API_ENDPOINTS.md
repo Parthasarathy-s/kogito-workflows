@@ -1,4 +1,4 @@
-# Kogito Checker-Maker Workflow - API Reference
+# Kogito Maker-Checker Workflow - API Reference
 
 ## Complete Endpoint Guide with Audit Logging
 
@@ -6,7 +6,7 @@ All endpoints are fully integrated with audit logging. Every action is automatic
 
 ### Base URL
 ```
-http://localhost:8080/checker-maker
+http://localhost:8080/maker-checker
 ```
 
 ---
@@ -14,12 +14,12 @@ http://localhost:8080/checker-maker
 ## Process Management Endpoints
 
 ### 1. Start a New Process Instance
-**POST** `/` or `/checker-maker`
+**POST** `/` or `/maker-checker`
 
-Start a new checker-maker approval workflow process.
+Start a new maker-checker approval workflow process.
 
 ```bash
-curl -X POST http://localhost:8080/checker-maker \
+curl -X POST http://localhost:8080/maker-checker \
   -H "Content-Type: application/json" \
   -d '{"status": "PENDING", "initiatedBy": "user@example.com"}'
 ```
@@ -43,7 +43,7 @@ curl -X POST http://localhost:8080/checker-maker \
 Retrieve all active and completed process instances with their statuses.
 
 ```bash
-curl -X GET http://localhost:8080/checker-maker/instances
+curl -X GET http://localhost:8080/maker-checker/instances
 ```
 
 **Response:**
@@ -53,14 +53,14 @@ curl -X GET http://localhost:8080/checker-maker/instances
   "instances": [
     {
       "id": "d1234567-89ab-cdef-0123-456789abcdef",
-      "processId": "checker_maker",
+      "processId": "maker_checker",
       "status": "ACTIVE",
       "startDate": "2026-01-09T10:30:00",
       "lastUpdate": "2026-01-09T10:35:00"
     },
     {
       "id": "a9876543-21fe-dcba-9876-543210fedcba",
-      "processId": "checker_maker",
+      "processId": "maker_checker",
       "status": "COMPLETED",
       "startDate": "2026-01-09T09:00:00",
       "lastUpdate": "2026-01-09T09:45:00"
@@ -79,14 +79,14 @@ curl -X GET http://localhost:8080/checker-maker/instances
 Retrieve details for a specific process instance.
 
 ```bash
-curl -X GET http://localhost:8080/checker-maker/instances/d1234567-89ab-cdef-0123-456789abcdef
+curl -X GET http://localhost:8080/maker-checker/instances/d1234567-89ab-cdef-0123-456789abcdef
 ```
 
 **Response:**
 ```json
 {
   "id": "d1234567-89ab-cdef-0123-456789abcdef",
-  "processId": "checker_maker",
+  "processId": "maker_checker",
   "status": "ACTIVE",
   "startDate": "2026-01-09T10:30:00",
   "lastUpdate": "2026-01-09T10:35:00",
@@ -108,7 +108,7 @@ curl -X GET http://localhost:8080/checker-maker/instances/d1234567-89ab-cdef-012
 List all pending user tasks in a process instance.
 
 ```bash
-curl -X GET http://localhost:8080/checker-maker/instances/d1234567-89ab-cdef-0123-456789abcdef/tasks
+curl -X GET http://localhost:8080/maker-checker/instances/d1234567-89ab-cdef-0123-456789abcdef/tasks
 ```
 
 **Response:**
@@ -140,35 +140,35 @@ Complete a task with a decision (approve/reject/reset).
 ```bash
 curl -X POST -H 'Content-Type: application/json' \
   -d '{"decision": "approve"}' \
-  http://localhost:8080/checker-maker/instances/d1234567-89ab-cdef-0123-456789abcdef/tasks/task-uuid-12345/complete
+  http://localhost:8080/maker-checker/instances/d1234567-89ab-cdef-0123-456789abcdef/tasks/task-uuid-12345/complete
 ```
 
 **Complete Maker Task - Reject (restart from Init):**
 ```bash
 curl -X POST -H 'Content-Type: application/json' \
   -d '{"decision": "reject"}' \
-  http://localhost:8080/checker-maker/instances/d1234567-89ab-cdef-0123-456789abcdef/tasks/task-uuid-12345/complete
+  http://localhost:8080/maker-checker/instances/d1234567-89ab-cdef-0123-456789abcdef/tasks/task-uuid-12345/complete
 ```
 
 **Complete Checker Task - Approve (end workflow):**
 ```bash
 curl -X POST -H 'Content-Type: application/json' \
   -d '{"decision": "approve"}' \
-  http://localhost:8080/checker-maker/instances/d1234567-89ab-cdef-0123-456789abcdef/tasks/task-uuid-67890/complete
+  http://localhost:8080/maker-checker/instances/d1234567-89ab-cdef-0123-456789abcdef/tasks/task-uuid-67890/complete
 ```
 
 **Complete Checker Task - Reject (send back to Maker):**
 ```bash
 curl -X POST -H 'Content-Type: application/json' \
   -d '{"decision": "reject"}' \
-  http://localhost:8080/checker-maker/instances/d1234567-89ab-cdef-0123-456789abcdef/tasks/task-uuid-67890/complete
+  http://localhost:8080/maker-checker/instances/d1234567-89ab-cdef-0123-456789abcdef/tasks/task-uuid-67890/complete
 ```
 
 **Complete Checker Task - Reset (restart from Init):**
 ```bash
 curl -X POST -H 'Content-Type: application/json' \
   -d '{"decision": "reset"}' \
-  http://localhost:8080/checker-maker/instances/d1234567-89ab-cdef-0123-456789abcdef/tasks/task-uuid-67890/complete
+  http://localhost:8080/maker-checker/instances/d1234567-89ab-cdef-0123-456789abcdef/tasks/task-uuid-67890/complete
 ```
 
 **Response (200 OK):**
@@ -195,7 +195,7 @@ curl -X POST -H 'Content-Type: application/json' \
 Retrieve all recorded audit log entries from the system. Returns the most recent logs.
 
 ```bash
-curl -X GET http://localhost:8080/checker-maker/audit-logs
+curl -X GET http://localhost:8080/maker-checker/audit-logs
 ```
 
 **Response:**
@@ -208,10 +208,10 @@ curl -X GET http://localhost:8080/checker-maker/audit-logs
     {
       "id": 1,
       "processInstanceId": "d1234567-89ab-cdef-0123-456789abcdef",
-      "processId": "checker_maker",
+      "processId": "maker_checker",
       "eventType": "PROCESS_STARTED",
       "action": "startProcess",
-      "userId": "checker-maker-resource",
+      "userId": "maker-checker-resource",
       "userName": null,
       "taskId": null,
       "comments": "Process instance started successfully. ID: d1234567-89ab-cdef-0123-456789abcdef",
@@ -220,10 +220,10 @@ curl -X GET http://localhost:8080/checker-maker/audit-logs
     {
       "id": 2,
       "processInstanceId": "d1234567-89ab-cdef-0123-456789abcdef",
-      "processId": "checker_maker",
+      "processId": "maker_checker",
       "eventType": "QUERY",
       "action": "getTasks",
-      "userId": "checker-maker-resource",
+      "userId": "maker-checker-resource",
       "userName": null,
       "taskId": null,
       "comments": "Retrieved 1 task(s) for instance",
@@ -232,7 +232,7 @@ curl -X GET http://localhost:8080/checker-maker/audit-logs
     {
       "id": 3,
       "processInstanceId": "d1234567-89ab-cdef-0123-456789abcdef",
-      "processId": "checker_maker",
+      "processId": "maker_checker",
       "eventType": "TASK_COMPLETED",
       "action": "completeTask",
       "userId": "maker-user",
@@ -253,7 +253,7 @@ curl -X GET http://localhost:8080/checker-maker/audit-logs
 Retrieve audit trail for a specific process instance - shows complete history of actions taken.
 
 ```bash
-curl -X GET http://localhost:8080/checker-maker/audit-logs/instance/d1234567-89ab-cdef-0123-456789abcdef
+curl -X GET http://localhost:8080/maker-checker/audit-logs/instance/d1234567-89ab-cdef-0123-456789abcdef
 ```
 
 **Response:**
@@ -311,14 +311,14 @@ curl -X GET http://localhost:8080/checker-maker/audit-logs/instance/d1234567-89a
 Simple health check endpoint to verify service is running.
 
 ```bash
-curl -X GET http://localhost:8080/checker-maker/health
+curl -X GET http://localhost:8080/maker-checker/health
 ```
 
 **Response:**
 ```json
 {
   "status": "UP",
-  "message": "Checker-Maker workflow service is running"
+  "message": "Maker-Checker workflow service is running"
 }
 ```
 
@@ -332,13 +332,13 @@ curl -X GET http://localhost:8080/checker-maker/health
 # 1. Start a new process
 INSTANCE_ID=$(curl -s -X POST -H 'Content-Type: application/json' \
   -d '{}' \
-  http://localhost:8080/checker-maker | jq -r '.processInstanceId')
+  http://localhost:8080/maker-checker | jq -r '.processInstanceId')
 
 echo "Started process: $INSTANCE_ID"
 
 # 2. Get Maker task
 TASK_ID=$(curl -s -X GET \
-  http://localhost:8080/checker-maker/instances/$INSTANCE_ID/tasks | \
+  http://localhost:8080/maker-checker/instances/$INSTANCE_ID/tasks | \
   jq -r '.tasks[0].id')
 
 echo "Got Maker task: $TASK_ID"
@@ -346,11 +346,11 @@ echo "Got Maker task: $TASK_ID"
 # 3. Complete Maker task with approval
 curl -X POST -H 'Content-Type: application/json' \
   -d '{"decision": "approve"}' \
-  http://localhost:8080/checker-maker/instances/$INSTANCE_ID/tasks/$TASK_ID/complete
+  http://localhost:8080/maker-checker/instances/$INSTANCE_ID/tasks/$TASK_ID/complete
 
 # 4. Get Checker task
 TASK_ID=$(curl -s -X GET \
-  http://localhost:8080/checker-maker/instances/$INSTANCE_ID/tasks | \
+  http://localhost:8080/maker-checker/instances/$INSTANCE_ID/tasks | \
   jq -r '.tasks[0].id')
 
 echo "Got Checker task: $TASK_ID"
@@ -358,12 +358,12 @@ echo "Got Checker task: $TASK_ID"
 # 5. Complete Checker task with approval
 curl -X POST -H 'Content-Type: application/json' \
   -d '{"decision": "approve"}' \
-  http://localhost:8080/checker-maker/instances/$INSTANCE_ID/tasks/$TASK_ID/complete
+  http://localhost:8080/maker-checker/instances/$INSTANCE_ID/tasks/$TASK_ID/complete
 
 echo "Workflow completed!"
 
 # 6. View complete audit trail
-curl -X GET http://localhost:8080/checker-maker/audit-logs/instance/$INSTANCE_ID | jq .
+curl -X GET http://localhost:8080/maker-checker/audit-logs/instance/$INSTANCE_ID | jq .
 ```
 
 ### Rejection and Rework Scenario
@@ -376,19 +376,19 @@ TASK_ID="task-uuid-12345"
 # 1. Maker rejects (send back to Init)
 curl -X POST -H 'Content-Type: application/json' \
   -d '{"decision": "reject"}' \
-  http://localhost:8080/checker-maker/instances/$INSTANCE_ID/tasks/$TASK_ID/complete
+  http://localhost:8080/maker-checker/instances/$INSTANCE_ID/tasks/$TASK_ID/complete
 
 echo "Maker rejected - process reset"
 
 # 2. Get new Maker task (process returned to Maker after reset)
 TASK_ID=$(curl -s -X GET \
-  http://localhost:8080/checker-maker/instances/$INSTANCE_ID/tasks | \
+  http://localhost:8080/maker-checker/instances/$INSTANCE_ID/tasks | \
   jq -r '.tasks[0].id')
 
 # 3. Maker approves on second attempt
 curl -X POST -H 'Content-Type: application/json' \
   -d '{"decision": "approve"}' \
-  http://localhost:8080/checker-maker/instances/$INSTANCE_ID/tasks/$TASK_ID/complete
+  http://localhost:8080/maker-checker/instances/$INSTANCE_ID/tasks/$TASK_ID/complete
 
 echo "Workflow proceeding to Checker"
 ```
@@ -436,17 +436,17 @@ All actions are logged with the following event types:
 
 **Test 2: View audit logs**
 ```bash
-curl -X GET http://localhost:8080/checker-maker/audit-logs | jq '.logs | length'
+curl -X GET http://localhost:8080/maker-checker/audit-logs | jq '.logs | length'
 ```
 
 **Test 3: Get all instances**
 ```bash
-curl -X GET http://localhost:8080/checker-maker/instances | jq '.instances | length'
+curl -X GET http://localhost:8080/maker-checker/instances | jq '.instances | length'
 ```
 
 **Test 4: Health check**
 ```bash
-curl -X GET http://localhost:8080/checker-maker/health
+curl -X GET http://localhost:8080/maker-checker/health
 ```
 
 ---
